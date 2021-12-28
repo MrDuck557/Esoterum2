@@ -13,7 +13,7 @@ public class BinarySwitch extends BinaryBlock{
         inputs = new boolean[]{false, false, false, false};
     }
 
-    public static class BinarySwitchBuild extends BinaryBuild{
+    public class BinarySwitchBuild extends BinaryBuild{
         @Override
         public boolean configTapped(){
             signal = !signal;

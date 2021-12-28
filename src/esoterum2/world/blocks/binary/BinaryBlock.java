@@ -38,14 +38,33 @@ public class BinaryBlock extends Block{
     }
 
     @Override
+    protected TextureRegion[] icons(){
+        return new TextureRegion[]{
+        baseRegion, highlightRegion
+        };
+    }
+
+    @Override
     public boolean canReplace(Block other){
         if(other.alwaysReplace) return true;
         return (other != this || rotate) && other instanceof BinaryBlock && size == other.size;
     }
 
-    public static abstract class BinaryBuild extends Building{
+    public abstract class BinaryBuild extends Building{
         public boolean signal;
         public boolean shouldPropagate;
+
+        @Override
+        public void created(){
+            super.created();
+            if(!rotate) rotation(0);
+        }
+
+        @Override
+        public void updateProximity(){
+            super.updateProximity();
+            updateSignal();
+        }
 
         @Override
         public void updateTile(){
@@ -57,7 +76,7 @@ public class BinaryBlock extends Block{
         public void propagateSignal(){
             shouldPropagate = false;
             for(int i = 0; i < 4; i++){
-                if(((BinaryBlock)block).outputs[i] && nearby(i) instanceof BinaryBuild b && inputValid(Utils.relativeDir(this, b))){
+                if(outputs[i] && multiB(i) instanceof BinaryBuild b){ //&& b.inputValid(Utils.relativeDir(this, b))
                     try{
                         b.updateSignal();
                     }catch(StackOverflowError e){
@@ -68,18 +87,18 @@ public class BinaryBlock extends Block{
         }
 
         //implementation left to the block
-        //in general, it should call propogateSignal() if the state changed
+        //in general, it should call propagateSignal() if the state changed
         public abstract void updateSignal();
 
         public boolean signal(int dir){
-            return signal && ((BinaryBlock)block).outputs[dir];
+            return signal && outputs[dir];
         }
 
         @Override
         public void draw(){
-            Draw.rect(((BinaryBlock)block).baseRegion, x, y, rotdeg());
+            Draw.rect(baseRegion, x, y, rotdeg());
             Draw.color(signal ? team.color : Color.white);
-            Draw.rect(((BinaryBlock)block).highlightRegion, x, y, rotdeg());
+            Draw.rect(highlightRegion, x, y, rotdeg());
             Draw.color();
         }
 
@@ -107,7 +126,17 @@ public class BinaryBlock extends Block{
         }
 
         public boolean inputValid(int dir){
-            return ((BinaryBlock)block).inputs[dir];
+            return inputs[dir];
+        }
+
+        public Building multiB(int dir){
+            return switch(dir){
+                case 0 -> front();
+                case 1 -> left();
+                case 2 -> back();
+                case 3 -> right();
+                default -> null;
+            };
         }
     }
 }
