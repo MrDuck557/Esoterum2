@@ -4,6 +4,7 @@ import arc.*;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
+import arc.math.geom.*;
 import arc.util.io.*;
 import esoterum2.*;
 import mindustry.gen.*;
@@ -16,8 +17,8 @@ public class BinaryBlock extends Block{
 
     public boolean[] outputs;
     public boolean[] inputs;
-
-    public TextureRegion baseRegion, highlightRegion;
+    public boolean largeConnections;
+    public TextureRegion baseRegion, highlightRegion, connectionRegion;
 
     public BinaryBlock(String name){
         super(name);
@@ -35,6 +36,7 @@ public class BinaryBlock extends Block{
         super.load();
         baseRegion = Core.atlas.find("esoterum-duck-base");
         highlightRegion = Core.atlas.find(name + "-highlight");
+        connectionRegion = Core.atlas.find("esoterum-duck-connection" + (largeConnections ? "-large" : ""));
     }
 
     @Override
@@ -53,17 +55,20 @@ public class BinaryBlock extends Block{
     public abstract class BinaryBuild extends Building{
         public boolean signal;
         public boolean shouldPropagate;
+        public boolean[] connections;
 
         @Override
         public void created(){
             super.created();
             if(!rotate) rotation(0);
+            connections = new boolean[4];
         }
 
         @Override
-        public void updateProximity(){
-            super.updateProximity();
+        public void onProximityUpdate(){
+            super.onProximityUpdate();
             updateSignal();
+            updateConnections();
         }
 
         @Override
@@ -73,10 +78,18 @@ public class BinaryBlock extends Block{
             }
         }
 
+        public void updateConnections(){
+            for(int i = 0; i < 4; i++){
+                connections[i] = multiB(i) instanceof BinaryBuild b &&
+                ((b.inputValid(Utils.relativeDir(b, this)) && outputs[i]) ||
+                b.outputValid(Utils.relativeDir(b, this)) && inputs[i]);
+            }
+        }
+
         public void propagateSignal(){
             shouldPropagate = false;
             for(int i = 0; i < 4; i++){
-                if(outputs[i] && multiB(i) instanceof BinaryBuild b){ //&& b.inputValid(Utils.relativeDir(this, b))
+                if(outputs[i] && multiB(i) instanceof BinaryBuild b && connections[i]){
                     try{
                         b.updateSignal();
                     }catch(StackOverflowError e){
@@ -97,6 +110,15 @@ public class BinaryBlock extends Block{
         @Override
         public void draw(){
             Draw.rect(baseRegion, x, y, rotdeg());
+            for(int i = 0; i < 4; i++){
+                if(connections[i] && multiB(i) instanceof BinaryBuild b){
+                    Draw.color((
+                    (inputs[i] && b.signal(Utils.relativeDir(b, this))) ||
+                    (signal(i) && b.inputValid(Utils.relativeDir(b, this)))
+                    ) ? team.color : Color.white);
+                    Draw.rect(connectionRegion, x, y, (rotation + i) % 4 * 90);
+                }
+            }
             Draw.color(signal ? team.color : Color.white);
             Draw.rect(highlightRegion, x, y, rotdeg());
             Draw.color();
@@ -125,18 +147,18 @@ public class BinaryBlock extends Block{
             return super.sense(sensor);
         }
 
+        public boolean outputValid(int dir){
+            return outputs[dir];
+        }
+
         public boolean inputValid(int dir){
             return inputs[dir];
         }
 
+        //stolen and modified left() code
         public Building multiB(int dir){
-            return switch(dir){
-                case 0 -> front();
-                case 1 -> left();
-                case 2 -> back();
-                case 3 -> right();
-                default -> null;
-            };
+            return nearby(Geometry.d4(rotation + dir).x * (block.size / 2 + 1),
+            Geometry.d4(rotation + dir).y * (block.size / 2 + 1));
         }
     }
 }

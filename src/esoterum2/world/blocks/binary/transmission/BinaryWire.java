@@ -9,6 +9,7 @@ public class BinaryWire extends BinaryBlock{
         super(name);
         outputs = new boolean[]{true, false, false, false};
         inputs = new boolean[]{false, true, true, true};
+        largeConnections = true;
     }
 
     public class BinaryWireBuild extends BinaryBuild{

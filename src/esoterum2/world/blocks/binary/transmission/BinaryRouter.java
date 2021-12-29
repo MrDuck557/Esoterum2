@@ -8,6 +8,7 @@ public class BinaryRouter extends BinaryBlock{
         super(name);
         outputs = new boolean[]{true, true, true, true};
         inputs = new boolean[]{true, true, true, true};
+        rotate = false;
     }
 
     public class BinaryRouterBuild extends BinaryBuild{
