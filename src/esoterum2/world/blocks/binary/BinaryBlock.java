@@ -20,6 +20,9 @@ public class BinaryBlock extends Block{
     public boolean largeConnections;
     public boolean rotateHighlight;
     public TextureRegion baseRegion, highlightRegion, connectionRegion;
+    public String decalType;
+    public TextureRegion decalRegion;
+    public TextureRegion[] decalRegions;
 
     public BinaryBlock(String name){
         super(name);
@@ -31,6 +34,7 @@ public class BinaryBlock extends Block{
         buildVisibility = BuildVisibility.shown;
         category = Category.logic;
         rotateHighlight = true;
+        decalType = "";
     }
 
     @Override
@@ -39,12 +43,21 @@ public class BinaryBlock extends Block{
         baseRegion = Core.atlas.find("esoterum-duck-base");
         highlightRegion = Core.atlas.find(name + "-highlight");
         connectionRegion = Core.atlas.find("esoterum-duck-connection" + (largeConnections ? "-large" : ""));
+        if(!decalType.equals("")){
+            decalRegion = Core.atlas.find("esoterum-duck-decal-" + decalType);
+            decalRegions = new TextureRegion[4];
+            for(int i = 0; i < 4; i++){
+                decalRegions[i] = Core.atlas.find("esoterum-duck-decal-" + decalType + "-" + i);
+            }
+        }
     }
 
     @Override
     protected TextureRegion[] icons(){
-        return new TextureRegion[]{
+        return decalRegion == null ? new TextureRegion[]{
         baseRegion, highlightRegion
+        } : new TextureRegion[]{
+        baseRegion, decalRegion, highlightRegion
         };
     }
 
@@ -54,7 +67,7 @@ public class BinaryBlock extends Block{
         return (other != this || rotate) && other instanceof BinaryBlock && size == other.size;
     }
 
-    public abstract class BinaryBuild extends Building{
+    public class BinaryBuild extends Building{
         public boolean signal;
         public boolean shouldPropagate;
         public boolean[] connections;
@@ -69,8 +82,8 @@ public class BinaryBlock extends Block{
         @Override
         public void onProximityUpdate(){
             super.onProximityUpdate();
-            updateSignal();
             updateConnections();
+            updateSignal();
         }
 
         @Override
@@ -101,9 +114,20 @@ public class BinaryBlock extends Block{
             }
         }
 
-        //implementation left to the block
+        //implementation generally left to the block
         //in general, it should call propagateSignal() if the state changed
-        public abstract void updateSignal();
+        public void updateSignal(){
+            boolean temp = signal;
+            signal = false;
+            for(int i = 0; i < 4; i++){
+                if(inputValid(i) && multiB(i) instanceof BinaryBuild b){
+                    signal |= b.signal(Utils.relativeDir(b, this));
+                }
+            }
+            if(temp != signal){
+                propagateSignal();
+            }
+        }
 
         public boolean signal(int dir){
             return signal && outputValid(dir);
@@ -116,6 +140,7 @@ public class BinaryBlock extends Block{
         @Override
         public void draw(){
             drawBase();
+            drawDecals();
             drawConnections();
             drawHighlight();
         }
@@ -124,11 +149,17 @@ public class BinaryBlock extends Block{
             Draw.rect(baseRegion, x, y, rotdeg());
         }
 
+        protected void drawDecals(){
+            if(decalRegion != null){
+                Draw.rect(rotate ? decalRegions[rotation] : decalRegion, x, y, 0);
+            }
+        }
+
         protected void drawConnections(){
             for(int i = 0; i < 4; i++){
                 if(connections[i] && multiB(i) instanceof BinaryBuild b){
                     Draw.color((
-                    (inputs[i] && b.signal(Utils.relativeDir(b, this))) ||
+                    (inputValid(i) && b.signal(this)) ||
                     (signal(i) && b.inputValid(Utils.relativeDir(b, this)))
                     ) ? team.color : Color.white);
                     Draw.rect(connectionRegion, x, y, (rotation + i) % 4 * 90);

@@ -13,18 +13,5 @@ public class BinaryRouter extends BinaryBlock{
 
     public class BinaryRouterBuild extends BinaryBuild{
 
-        @Override
-        public void updateSignal(){
-            boolean temp = signal;
-            signal = false;
-            for(int i = 0; i < 4; i++){
-                if(multiB(i) instanceof BinaryBuild b){
-                    signal |= b.signal(Utils.relativeDir(b, this));
-                }
-            }
-            if(temp != signal){
-                propagateSignal();
-            }
-        }
     }
 }

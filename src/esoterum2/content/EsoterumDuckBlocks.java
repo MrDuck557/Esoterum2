@@ -1,5 +1,6 @@
 package esoterum2.content;
 
+import esoterum2.world.blocks.binary.logic.*;
 import esoterum2.world.blocks.binary.memory.*;
 import esoterum2.world.blocks.binary.source.*;
 import esoterum2.world.blocks.binary.transmission.*;
@@ -8,7 +9,8 @@ import mindustry.world.*;
 
 public class EsoterumDuckBlocks implements ContentList{
 
-    static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch, bflipflop; //bswtich because switch is a keyword
+    static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch, bflipflop,
+    bnotgate;
 
     @Override
     public void load(){
@@ -22,5 +24,10 @@ public class EsoterumDuckBlocks implements ContentList{
         }};
         bdlatch = new BinaryDLatch("dlatch");
         bflipflop = new BinaryFlipFlop("flipflop");
+
+        bnotgate = new BinaryLogicGate("not-gate"){{
+            operation = (i) -> i == 0;
+            single = true;
+        }};
     }
 }

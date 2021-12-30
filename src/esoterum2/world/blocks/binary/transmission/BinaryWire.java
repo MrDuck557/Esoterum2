@@ -14,18 +14,5 @@ public class BinaryWire extends BinaryBlock{
 
     public class BinaryWireBuild extends BinaryBuild{
 
-        @Override
-        public void updateSignal(){
-            boolean temp = signal;
-            signal = false;
-            for(int i = 1; i < 4; i++){
-                if(multiB(i) instanceof BinaryBuild b){
-                    signal |= b.signal(Utils.relativeDir(b, this));
-                }
-            }
-            if(temp != signal){
-                propagateSignal();
-            }
-        }
     }
 }
