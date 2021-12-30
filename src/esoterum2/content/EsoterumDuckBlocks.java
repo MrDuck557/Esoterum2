@@ -8,7 +8,7 @@ import mindustry.world.*;
 
 public class EsoterumDuckBlocks implements ContentList{
 
-    static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch; //bswtich because switch is a keyword
+    static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch, bflipflop; //bswtich because switch is a keyword
 
     @Override
     public void load(){
@@ -21,5 +21,6 @@ public class EsoterumDuckBlocks implements ContentList{
             wireConnections = new int[]{1, 0, 3, 2};
         }};
         bdlatch = new BinaryDLatch("dlatch");
+        bflipflop = new BinaryFlipFlop("flipflop");
     }
 }
