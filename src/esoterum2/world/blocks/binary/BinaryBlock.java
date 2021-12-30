@@ -160,7 +160,7 @@ public class BinaryBlock extends Block{
                 if(connections[i] && multiB(i) instanceof BinaryBuild b){
                     Draw.color((
                     (inputValid(i) && b.signal(this)) ||
-                    (signal(i) && b.inputValid(Utils.relativeDir(b, this)))
+                    (signal(i))
                     ) ? team.color : Color.white);
                     Draw.rect(connectionRegion, x, y, (rotation + i) % 4 * 90);
                 }

@@ -24,7 +24,7 @@ public class BinaryLogicGate extends BinaryBlock{
         decalType = "silver";
         configurable = saveConfig = true;
         config(Integer.class, (BinaryLogicGateBuild b, Integer i) -> {
-            b.config = (byte)(i % 3);
+            b.config = (byte)((i + 3) % 3);
             b.updateProximity();
         });
         operation = i -> false;
@@ -44,7 +44,7 @@ public class BinaryLogicGate extends BinaryBlock{
         @Override
         public void buildConfiguration(Table table){
             table.button(Icon.rotate, () -> {
-                configure(config + 1);
+                configure(config - 1);
                 updateProximity();
                 updateSignal();
             }).size(40f).tooltip("Rotate Input" + (single ? "" : "s"));

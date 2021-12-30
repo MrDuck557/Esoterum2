@@ -9,7 +9,7 @@ import mindustry.world.*;
 
 public class EsoterumDuckBlocks implements ContentList{
 
-    static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch, bflipflop,
+    static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch, bflipflop, bsignalcontroller,
     bnotgate, bandgate, bxorgate;
 
     @Override
@@ -24,6 +24,7 @@ public class EsoterumDuckBlocks implements ContentList{
         }};
         bdlatch = new BinaryDLatch("dlatch");
         bflipflop = new BinaryFlipFlop("flipflop");
+        bsignalcontroller = new BinarySignalController("signal-controller");
 
         bnotgate = new BinaryLogicGate("not-gate"){{
             operation = (i) -> i == 0;
