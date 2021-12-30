@@ -115,7 +115,16 @@ public class BinaryBlock extends Block{
 
         @Override
         public void draw(){
+            drawBase();
+            drawConnections();
+            drawHighlight();
+        }
+
+        protected void drawBase(){
             Draw.rect(baseRegion, x, y, rotdeg());
+        }
+
+        protected void drawConnections(){
             for(int i = 0; i < 4; i++){
                 if(connections[i] && multiB(i) instanceof BinaryBuild b){
                     Draw.color((
@@ -125,6 +134,10 @@ public class BinaryBlock extends Block{
                     Draw.rect(connectionRegion, x, y, (rotation + i) % 4 * 90);
                 }
             }
+            Draw.color();
+        }
+
+        protected void drawHighlight(){
             Draw.color(signal ? team.color : Color.white);
             Draw.rect(highlightRegion, x, y, rotateHighlight ? rotdeg() : 0);
             Draw.color();
