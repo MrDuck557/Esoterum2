@@ -57,7 +57,7 @@ public class BinaryBlock extends Block{
         return decalRegion == null ? new TextureRegion[]{
         baseRegion, highlightRegion
         } : new TextureRegion[]{
-        baseRegion, decalRegion, highlightRegion
+        baseRegion, rotate ? decalRegions[0] : decalRegion, highlightRegion
         };
     }
 

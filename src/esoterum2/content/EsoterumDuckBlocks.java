@@ -10,7 +10,7 @@ import mindustry.world.*;
 public class EsoterumDuckBlocks implements ContentList{
 
     static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch, bflipflop,
-    bnotgate;
+    bnotgate, bandgate, bxorgate;
 
     @Override
     public void load(){
@@ -28,6 +28,12 @@ public class EsoterumDuckBlocks implements ContentList{
         bnotgate = new BinaryLogicGate("not-gate"){{
             operation = (i) -> i == 0;
             single = true;
+        }};
+        bandgate = new BinaryLogicGate("and-gate"){{
+            operation = (i) -> i == 2;
+        }};
+        bxorgate = new BinaryLogicGate("xor-gate"){{
+            operation = (i) -> i == 1;
         }};
     }
 }
