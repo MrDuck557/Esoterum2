@@ -17,7 +17,7 @@ public class BinarySwitch extends BinaryBlock{
         @Override
         public boolean configTapped(){
             signal = !signal;
-            shouldPropagate = true;
+            propagateSignal();
             return false;
         }
 
@@ -32,8 +32,8 @@ public class BinarySwitch extends BinaryBlock{
             if(type == LAccess.enabled){
                 boolean temp = !Mathf.zero((float)p1);
                 if(temp != signal){
-                    shouldPropagate = true;
                     signal = temp;
+                    propagateSignal();
                 }
             }
         }

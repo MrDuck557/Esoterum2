@@ -18,6 +18,7 @@ public class BinaryBlock extends Block{
     public boolean[] outputs;
     public boolean[] inputs;
     public boolean largeConnections;
+    public boolean rotateHighlight;
     public TextureRegion baseRegion, highlightRegion, connectionRegion;
 
     public BinaryBlock(String name){
@@ -29,6 +30,7 @@ public class BinaryBlock extends Block{
         hideDetails = false;
         buildVisibility = BuildVisibility.shown;
         category = Category.logic;
+        rotateHighlight = true;
     }
 
     @Override
@@ -81,15 +83,15 @@ public class BinaryBlock extends Block{
         public void updateConnections(){
             for(int i = 0; i < 4; i++){
                 connections[i] = multiB(i) instanceof BinaryBuild b &&
-                ((b.inputValid(Utils.relativeDir(b, this)) && outputs[i]) ||
-                b.outputValid(Utils.relativeDir(b, this)) && inputs[i]);
+                ((b.inputValid(Utils.relativeDir(b, this)) && outputValid(i)) ||
+                b.outputValid(Utils.relativeDir(b, this)) && inputValid(i));
             }
         }
 
         public void propagateSignal(){
             shouldPropagate = false;
             for(int i = 0; i < 4; i++){
-                if(outputs[i] && multiB(i) instanceof BinaryBuild b && connections[i]){
+                if(outputValid(i) && multiB(i) instanceof BinaryBuild b && connections[i]){
                     try{
                         b.updateSignal();
                     }catch(StackOverflowError e){
@@ -104,7 +106,11 @@ public class BinaryBlock extends Block{
         public abstract void updateSignal();
 
         public boolean signal(int dir){
-            return signal && outputs[dir];
+            return signal && outputValid(dir);
+        }
+
+        public boolean signal(Building b){
+            return this.signal(Utils.relativeDir(this, b));
         }
 
         @Override
@@ -120,7 +126,7 @@ public class BinaryBlock extends Block{
                 }
             }
             Draw.color(signal ? team.color : Color.white);
-            Draw.rect(highlightRegion, x, y, rotdeg());
+            Draw.rect(highlightRegion, x, y, rotateHighlight ? rotdeg() : 0);
             Draw.color();
         }
 

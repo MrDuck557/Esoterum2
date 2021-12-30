@@ -22,6 +22,7 @@ public class BinaryJunction extends BinaryBlock{
         outputs = new boolean[]{true, true, true, true};
         inputs = new boolean[]{true, true, true, true};
         wireConnections = new int[]{2, 3, 0, 1};
+        rotate = false;
     }
 
     @Override
@@ -43,6 +44,26 @@ public class BinaryJunction extends BinaryBlock{
                 wires[i] = null;
             }
         }
+    }
+
+    @Override
+    protected TextureRegion[] icons(){
+        int len = 2;
+        for(TextureRegion i : wires){
+            if(i != null){
+                len++;
+            }
+        }
+        TextureRegion[] out = new TextureRegion[len];
+        out[0] = baseRegion;
+        out[1] = highlightRegion;
+        int index = 2;
+        for(TextureRegion i : wires){
+            if(i != null){
+                out[index++] = i;
+            }
+        }
+        return out;
     }
 
     public class BinaryJunctionBuild extends BinaryBuild{
