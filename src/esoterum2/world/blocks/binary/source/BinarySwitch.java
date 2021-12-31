@@ -23,7 +23,6 @@ public class BinarySwitch extends BinaryBlock{
 
         @Override
         public void updateSignal(){
-            //eh
             //should not be called
         }
 

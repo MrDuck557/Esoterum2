@@ -30,8 +30,8 @@ public class BinarySignalController extends BinaryBlock{
         });
 
         config(Integer.class, (BinarySignalControllerBuild b, Integer i) -> {
-            b.configs.incr(i, 1);
-            if(b.configs.get(i) > 2) b.configs.set(i, 0);
+            b.configs.incr(i, -1);
+            if(b.configs.get(i) < 0) b.configs.set(i, 2);
             b.updateProximity();
         });
     }

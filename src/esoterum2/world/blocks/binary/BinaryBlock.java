@@ -101,6 +101,7 @@ public class BinaryBlock extends Block{
             }
         }
 
+        //generic signal propagation that works for pretty much everything
         public void propagateSignal(){
             shouldPropagate = false;
             for(int i = 0; i < 4; i++){
@@ -108,6 +109,7 @@ public class BinaryBlock extends Block{
                     try{
                         b.updateSignal();
                     }catch(StackOverflowError e){
+                        //try it on next frame
                         shouldPropagate = true;
                     }
                 }
@@ -176,7 +178,7 @@ public class BinaryBlock extends Block{
 
         @Override
         public void drawTeam(){
-            //no I guess
+            //no
         }
 
         @Override
@@ -197,6 +199,7 @@ public class BinaryBlock extends Block{
             return super.sense(sensor);
         }
 
+        //these exist for overriding
         public boolean outputValid(int dir){
             return outputs[dir];
         }
