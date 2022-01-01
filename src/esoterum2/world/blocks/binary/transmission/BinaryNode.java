@@ -95,7 +95,9 @@ public class BinaryNode extends BinaryBlock{
                 }
             }
             BinaryNodeBuild link = linkedNode();
-            if(link != null && link.signal != inputSignal){
+            if(link == null){
+                signal = false;
+            }else if(link.signal != inputSignal){
                 link.signal = inputSignal;
                 link.propagateSignal();
             }
@@ -163,6 +165,7 @@ public class BinaryNode extends BinaryBlock{
         public void disconnect(){
             BinaryNodeBuild link = linkedNode();
             config = new Point2(0, 0);
+            updateProximity();
             if(link != null){
                 link.disconnect();
             }
