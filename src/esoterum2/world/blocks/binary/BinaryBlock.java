@@ -111,6 +111,7 @@ public class BinaryBlock extends Block{
                     }catch(StackOverflowError e){
                         //try it on next frame
                         shouldPropagate = true;
+                        b.shouldPropagate = true;
                     }
                 }
             }
@@ -162,7 +163,7 @@ public class BinaryBlock extends Block{
                 if(connections[i] && multiB(i) instanceof BinaryBuild b){
                     Draw.color((
                     (inputValid(i) && b.signal(this)) ||
-                    (signal(i))
+                    (signal(i) && b.inputValid(Utils.relativeDir(b, this)))
                     ) ? team.color : Color.white);
                     Draw.rect(connectionRegion, x, y, (rotation + i) % 4 * 90);
                 }
