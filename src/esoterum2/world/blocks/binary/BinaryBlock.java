@@ -20,6 +20,8 @@ public class BinaryBlock extends Block{
     public boolean largeConnections;
     public boolean rotateHighlight;
     public TextureRegion baseRegion, highlightRegion, connectionRegion;
+    public boolean useOnOffHighlights;
+    public TextureRegion onHighlight, offHighlight;
     public String decalType;
     public TextureRegion decalRegion;
     public TextureRegion[] decalRegions;
@@ -35,13 +37,20 @@ public class BinaryBlock extends Block{
         category = Category.logic;
         rotateHighlight = true;
         decalType = "";
+        useOnOffHighlights = false;
     }
 
     @Override
     public void load(){
         super.load();
         baseRegion = Core.atlas.find("esoterum-duck-base");
-        highlightRegion = Core.atlas.find(name + "-highlight");
+        if(useOnOffHighlights){
+            onHighlight = Core.atlas.find(name + "-on");
+            //setting highlightRegion to offHightlight allows for max lazy
+            highlightRegion = offHighlight = Core.atlas.find(name + "-off");
+        }else{
+            highlightRegion = Core.atlas.find(name + "-highlight");
+        }
         connectionRegion = Core.atlas.find("esoterum-duck-connection" + (largeConnections ? "-large" : ""));
         if(!decalType.equals("")){
             decalRegion = Core.atlas.find("esoterum-duck-decal-" + decalType);
@@ -172,9 +181,13 @@ public class BinaryBlock extends Block{
         }
 
         protected void drawHighlight(){
-            Draw.color(signal ? team.color : Color.white);
-            Draw.rect(highlightRegion, x, y, rotateHighlight ? rotdeg() : 0);
-            Draw.color();
+            if(useOnOffHighlights){
+                Draw.rect(signal ? onHighlight : offHighlight, x, y, rotateHighlight ? rotdeg() : 0);
+            }else{
+                Draw.color(signal ? team.color : Color.white);
+                Draw.rect(highlightRegion, x, y, rotateHighlight ? rotdeg() : 0);
+                Draw.color();
+            }
         }
 
         @Override

@@ -7,11 +7,12 @@ import esoterum2.world.blocks.binary.*;
 
 public class BinaryFlipFlop extends BinaryBlock{
 
-    TextureRegion onHighlight, offHighlight, inputRegion, frontRegion;
+    TextureRegion inputRegion, frontRegion;
 
     public BinaryFlipFlop(String name){
         super(name);
         rotateHighlight = false;
+        useOnOffHighlights = true;
         outputs = new boolean[]{true, false, false, false};
         inputs = new boolean[]{false, true, true, true};
     }
@@ -21,8 +22,6 @@ public class BinaryFlipFlop extends BinaryBlock{
         super.load();
         inputRegion = Core.atlas.find(name + "-input");
         frontRegion = Core.atlas.find(name + "-front");
-        onHighlight = Core.atlas.find(name + "-on");
-        offHighlight = Core.atlas.find(name + "-off");
     }
 
     @Override
@@ -59,11 +58,6 @@ public class BinaryFlipFlop extends BinaryBlock{
             Draw.rect(inputRegion, x, y, rotateHighlight ? rotdeg() : 0);
             Draw.color();
             Draw.rect(frontRegion, x, y, rotdeg());
-        }
-
-        @Override
-        protected void drawHighlight(){
-            Draw.rect((signal ? onHighlight : offHighlight), x, y, rotateHighlight ? rotdeg() : 0);
         }
     }
 }
