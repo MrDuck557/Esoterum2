@@ -105,9 +105,18 @@ public class BinaryLogicGate extends BinaryBlock{
         }
 
         @Override
+        public byte version(){
+            return (byte)(super.version() + 1);
+        }
+
+        @Override
         public void read(Reads read, byte revision){
             super.read(read, revision);
-            config = read.i();
+            if(revision == version() - 1){
+                config = read.b();
+            }else{
+                config = read.i();
+            }
         }
 
         @Override
