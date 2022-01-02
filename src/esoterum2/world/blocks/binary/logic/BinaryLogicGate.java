@@ -29,7 +29,7 @@ public class BinaryLogicGate extends BinaryBlock{
         decalType = "silver";
         configurable = saveConfig = true;
         config(Integer.class, (BinaryLogicGateBuild b, Integer i) -> {
-            b.config = (byte)((i + 3) % 3);
+            b.config = ((i + 3) % 3);
             b.updateProximity();
         });
         operation = i -> false;
@@ -37,7 +37,7 @@ public class BinaryLogicGate extends BinaryBlock{
     }
 
     public class BinaryLogicGateBuild extends BinaryBuild{
-        public byte config = 0;
+        public int config = 0;
         public int remVisits;
 
         @Override
@@ -107,13 +107,13 @@ public class BinaryLogicGate extends BinaryBlock{
         @Override
         public void read(Reads read, byte revision){
             super.read(read, revision);
-            config = read.b();
+            config = read.i();
         }
 
         @Override
         public void write(Writes write){
             super.write(write);
-            write.b(config);
+            write.i(config);
         }
     }
 }
