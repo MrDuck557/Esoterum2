@@ -110,6 +110,7 @@ public class BinaryNode extends BinaryBlock{
             Color lineColor = inputSignal || (c != null && c.inputSignal) ? team.color : Color.white;
             Draw.color(lineColor);
             Draw.rect(centerRegion, x, y, rotateHighlight ? rotdeg() : 0);
+            Draw.z(Layer.power);
             if(c != null){
                 Lines.stroke(1f, lineColor);
                 Lines.line(
@@ -118,6 +119,7 @@ public class BinaryNode extends BinaryBlock{
                 false
                 );
             }
+            Draw.reset();
         }
 
         @Override
