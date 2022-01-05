@@ -5,7 +5,6 @@ import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
 import arc.math.geom.*;
-import arc.struct.*;
 import arc.util.*;
 import arc.util.io.*;
 import esoterum2.*;
@@ -152,11 +151,11 @@ public class BinaryNode extends BinaryBlock{
         @Override
         public void placed(){
             super.placed();
+
             BinaryNodeBuild c = linkedNode();
             if(c != null && c.linkedNode() != this){
                 c.configure(this);
             }
-            updateProximity();
         }
 
         @Override

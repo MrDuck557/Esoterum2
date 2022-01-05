@@ -1,7 +1,4 @@
 apply plugin: "java"
-apply plugin: 'maven'
-
-group = 'com.github.YourUsername'
 
 version '1.0'
 
