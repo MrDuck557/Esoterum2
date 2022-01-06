@@ -37,9 +37,9 @@ public class BinaryDLatch extends BinaryBlock{
 
         @Override
         public void updateSignal(){
-            side = (left() instanceof BinaryBuild l && l.signal(this) ||
-            right() instanceof BinaryBuild r && r.signal(this));
-            if(back() instanceof BinaryBuild b && b.signal(this)){
+            side = (BinaryBlock.signal(left(), this) ||
+            BinaryBlock.signal(right(), this));
+            if(BinaryBlock.signal(back(),this) ){
                 back = true;
                 boolean temp = signal;
                 signal = side;

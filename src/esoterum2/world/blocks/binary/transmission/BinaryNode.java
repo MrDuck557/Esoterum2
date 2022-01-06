@@ -90,8 +90,8 @@ public class BinaryNode extends BinaryBlock{
         public void updateSignal(){
             inputSignal = false;
             for(int i = 0; i < 4; i++){
-                if(inputValid(i) && multiB(i) instanceof BinaryBuild b){
-                    inputSignal |= b.signal(Utils.relativeDir(b, this));
+                if(inputValid(i)){
+                    inputSignal |=BinaryBlock.signal(multiB(i),this);
                 }
             }
             BinaryNodeBuild link = linkedNode();

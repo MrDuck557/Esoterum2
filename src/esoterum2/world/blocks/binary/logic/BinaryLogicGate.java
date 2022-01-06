@@ -65,7 +65,7 @@ public class BinaryLogicGate extends BinaryBlock{
             boolean temp = signal;
             int count = 0;
             for(int i = 1; i < 4; i++){
-                if(inputValid(i) && multiB(i) instanceof BinaryBuild b && b.signal(this)){
+                if(inputValid(i) && BinaryBlock.signal(multiB(i), this)){
                     count++;
                 }
             }

@@ -78,13 +78,10 @@ public class BinaryJunction extends BinaryBlock{
             outSignals = new boolean[4];
             signal = false;
             for(int i = 0; i < 4; i++){
-                if(multiB(i) instanceof BinaryBuild b){
-                    inSignals[i] = b.signal(Utils.relativeDir(b, this));
-                    outSignals[wireConnections[i]] = inSignals[i];
-                    signal |= inSignals[i];
-                }else{
-                    inSignals[i] = false;
-                }
+                inSignals[i] = BinaryBlock.signal(multiB(i), this);
+                outSignals[wireConnections[i]] = inSignals[i];
+                signal |= inSignals[i];
+                inSignals[i] = false;
             }
             for(int i = 0; i < 4; i++){
                 if(temp[i] != outSignals[i]){

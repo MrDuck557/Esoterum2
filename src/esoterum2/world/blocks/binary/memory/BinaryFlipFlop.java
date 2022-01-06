@@ -38,9 +38,7 @@ public class BinaryFlipFlop extends BinaryBlock{
         public void updateSignal(){
             boolean temp = false;
             for(int i = 1; i < 4; i++){
-                if(multiB(i) instanceof BinaryBuild b){
-                    temp |= b.signal(this);
-                }
+                temp |= BinaryBlock.signal(multiB(i), this);
             }
             if(temp != prevInput){
                 prevInput = temp;

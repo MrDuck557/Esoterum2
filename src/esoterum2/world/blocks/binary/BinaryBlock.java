@@ -7,11 +7,15 @@ import arc.math.*;
 import arc.math.geom.*;
 import arc.util.io.*;
 import esoterum2.*;
+import mindustry.*;
+import mindustry.ctype.*;
 import mindustry.gen.*;
 import mindustry.logic.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.meta.*;
+
+import java.lang.reflect.*;
 
 public class BinaryBlock extends Block{
 
@@ -25,6 +29,9 @@ public class BinaryBlock extends Block{
     public String decalType;
     public TextureRegion decalRegion;
     public TextureRegion[] decalRegions;
+    public static Class<?> eso1Build;
+    public static Field eso1Signal;
+    public static boolean lookedForEso1;
 
     public BinaryBlock(String name){
         super(name);
@@ -38,6 +45,19 @@ public class BinaryBlock extends Block{
         rotateHighlight = true;
         decalType = "";
         useOnOffHighlights = false;
+        if(!lookedForEso1){
+            lookedForEso1 = true;
+            Block wire;
+            if((wire = Vars.content.getByName(ContentType.block, "esoterum-wire")) != null){
+                //this gets esoterum1's BinaryBlock.BinaryBuild if eso1 is installed
+                eso1Build = wire.getClass().getSuperclass().getDeclaredClasses()[0];
+                try{
+                    eso1Signal = eso1Build.getDeclaredField("signal");
+                }catch(NoSuchFieldException e){
+                    //ignore because this should not happen
+                }
+            }
+        }
     }
 
     @Override
@@ -76,9 +96,23 @@ public class BinaryBlock extends Block{
         return (other != this || rotate) && other instanceof BinaryBlock && size == other.size;
     }
 
+    public static boolean signal(Building from, BinaryBuild to){
+        if(from instanceof BinaryBuild b){
+            return b.signal(to);
+        }else if(eso1Build != null && eso1Build.isInstance(from)){
+            try{
+                return (((boolean[])eso1Signal.get(from))[Utils.relativeDir(from, to)]);
+            }catch(IllegalAccessException e){
+                return false;
+            }
+        }
+        return false;
+    }
+
     public class BinaryBuild extends Building{
         public boolean signal;
         public boolean shouldPropagate;
+        public boolean permaUpdate;
         public boolean[] connections;
 
         @Override
@@ -97,16 +131,19 @@ public class BinaryBlock extends Block{
 
         @Override
         public void updateTile(){
-            if(shouldPropagate){
+            if(permaUpdate || shouldPropagate){
+                updateSignal();
                 propagateSignal();
             }
         }
 
         public void updateConnections(){
+            permaUpdate = false;
             for(int i = 0; i < 4; i++){
                 connections[i] = multiB(i) instanceof BinaryBuild b &&
                 ((b.inputValid(Utils.relativeDir(b, this)) && outputValid(i)) ||
                 b.outputValid(Utils.relativeDir(b, this)) && inputValid(i));
+                permaUpdate |= eso1Build != null && eso1Build.isInstance(multiB(i));
             }
         }
 
@@ -132,8 +169,8 @@ public class BinaryBlock extends Block{
             boolean temp = signal;
             signal = false;
             for(int i = 0; i < 4; i++){
-                if(inputValid(i) && multiB(i) instanceof BinaryBuild b){
-                    signal |= b.signal(Utils.relativeDir(b, this));
+                if(inputValid(i)){
+                    signal |= BinaryBlock.signal(multiB(i), this);
                 }
             }
             if(temp != signal){
