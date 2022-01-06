@@ -14,7 +14,7 @@ public class BinaryLogicGate extends BinaryBlock{
     //accepts Integer instead of boolean[] to prevent this hypothetical scenario
     //i[0] && !i[1]
     //input order shouldn't matter
-    public Boolf<Integer> operation;
+    public IntBoolf operation;
     public boolean single;
     //Logic gates are the only block that can create an infinite on-off loop
     //So I implement this only for them
@@ -124,5 +124,9 @@ public class BinaryLogicGate extends BinaryBlock{
             super.write(write);
             write.i(config);
         }
+    }
+
+    public interface IntBoolf{
+        boolean get(int i);
     }
 }
