@@ -65,7 +65,7 @@ public class BinarySignalController extends BinaryBlock{
                 (inputValid(i) && multiB(i) instanceof BinaryBuild b && b.signal(this)) ||
                 (signal(i))
                 ) ? team.color : Color.white);
-                if(connections[i]){
+                if(getConnection(i)){
                     Draw.rect(connectionRegion, x, y, (rotation + i) % 4 * 90);
                 }
                 if(inputValid(i)){

@@ -113,13 +113,13 @@ public class BinaryBlock extends Block{
         public boolean signal;
         public boolean shouldPropagate;
         public boolean permaUpdate;
-        public boolean[] connections;
+        public int connections;
 
         @Override
         public void created(){
             super.created();
             if(!rotate) rotation(0);
-            connections = new boolean[4];
+            connections = 0;
         }
 
         @Override
@@ -140,9 +140,9 @@ public class BinaryBlock extends Block{
         public void updateConnections(){
             permaUpdate = false;
             for(int i = 0; i < 4; i++){
-                connections[i] = multiB(i) instanceof BinaryBuild b &&
+                setConnection(i, multiB(i) instanceof BinaryBuild b &&
                 ((b.inputValid(Utils.relativeDir(b, this)) && outputValid(i)) ||
-                b.outputValid(Utils.relativeDir(b, this)) && inputValid(i));
+                b.outputValid(Utils.relativeDir(b, this)) && inputValid(i)));
                 permaUpdate |= eso1Build != null && eso1Build.isInstance(multiB(i));
             }
         }
@@ -151,7 +151,7 @@ public class BinaryBlock extends Block{
         public void propagateSignal(){
             shouldPropagate = false;
             for(int i = 0; i < 4; i++){
-                if(outputValid(i) && multiB(i) instanceof BinaryBuild b && connections[i]){
+                if(outputValid(i) && multiB(i) instanceof BinaryBuild b && getConnection(i)){
                     try{
                         b.updateSignal();
                     }catch(StackOverflowError e){
@@ -206,7 +206,7 @@ public class BinaryBlock extends Block{
 
         protected void drawConnections(){
             for(int i = 0; i < 4; i++){
-                if(connections[i] && multiB(i) instanceof BinaryBuild b){
+                if(getConnection(i) && multiB(i) instanceof BinaryBuild b){
                     Draw.color((
                     (inputValid(i) && b.signal(this)) ||
                     (signal(i) && b.inputValid(Utils.relativeDir(b, this)))
@@ -230,6 +230,18 @@ public class BinaryBlock extends Block{
         @Override
         public void drawTeam(){
             //no
+        }
+
+        public boolean getConnection(int dir){
+            return (connections & (1 << dir)) != 0;
+        }
+
+        public void setConnection(int dir, boolean val){
+            if(val){
+                connections |= 1 << dir;
+            }else{
+                connections &= ~(1 << dir);
+            }
         }
 
         @Override
