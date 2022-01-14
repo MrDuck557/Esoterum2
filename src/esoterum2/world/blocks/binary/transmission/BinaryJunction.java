@@ -37,12 +37,8 @@ public class BinaryJunction extends BinaryBlock{
             }
         }
         wires = new TextureRegion[4];
-        TextureRegion ohno = Core.atlas.find("error");
         for(int i = 0; i < 4; i++){
-            wires[i] = Core.atlas.find(name + "-wire-" + i);
-            if(wires[i] == ohno){
-                wires[i] = null;
-            }
+            wires[i] = Core.atlas.find(name + "-wire-" + i, (TextureRegion)null);
         }
     }
 
