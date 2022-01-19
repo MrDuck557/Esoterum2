@@ -1,5 +1,6 @@
 package esoterum2.content;
 
+import esoterum2.world.blocks.binary.*;
 import esoterum2.world.blocks.binary.logic.*;
 import esoterum2.world.blocks.binary.memory.*;
 import esoterum2.world.blocks.binary.source.*;
@@ -9,7 +10,7 @@ import mindustry.world.*;
 
 public class EsoterumDuckBlocks implements ContentList{
 
-    static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch, bflipflop, bsignalcontroller, bnode, bled,
+    static Block bwire, bswitch, brouter, bjunction, bcjunction, bdlatch, bflipflop, bsignalcontroller, bnode, bled, bbus,
     bnotgate, bandgate, bxorgate;
 
     @Override
@@ -29,6 +30,10 @@ public class EsoterumDuckBlocks implements ContentList{
         bled = new BinaryWire("led"){{
             largeConnections = false;
             useOnOffHighlights = true;
+        }};
+        bbus = new BinaryNoBackflow("bus"){{
+            outputs = new boolean[]{true, true, true, true};
+            inputs = new boolean[]{true, true, true, true};
         }};
 
         bnotgate = new BinaryLogicGate("not-gate"){{

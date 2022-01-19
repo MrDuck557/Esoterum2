@@ -38,6 +38,21 @@ public class BinaryNoBackflow extends BinaryBlock{
             }
         }
 
+        public void propagateSignal(){
+            shouldPropagate = false;
+            for(int i = 0; i < 4; i++){
+                if(outputValid(i) && multiB(i) instanceof BinaryBuild b && !(b instanceof BinaryNoBackflowBuild) && getConnection(i)){
+                    try{
+                        b.updateSignal();
+                    }catch(StackOverflowError e){
+                        //try it on next frame
+                        shouldPropagate = true;
+                        b.shouldPropagate = true;
+                    }
+                }
+            }
+        }
+
         @Override
         public void onProximityAdded(){
             super.onProximityAdded();
